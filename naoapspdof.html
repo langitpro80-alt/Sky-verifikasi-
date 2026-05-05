@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky Verifikasi</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #ffffff;
+            /* Animated Gradient Background */
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #182848);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Teks Header Informasi Web */
+        .info-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            max-width: 400px;
+        }
+
+        .info-header span.highlight {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .info-header strong {
+            color: #00d2ff;
+        }
+
+        /* Gaya Glassmorphism */
+        .verification-widget {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 30px;
+            width: 320px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .checkbox-container:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animasi Kotak Centang Mulus */
+        .checkbox {
+            width: 26px;
+            height: 26px;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Efek membal di kotaknya */
+        }
+
+        .checkbox.checked {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        /* Animasi Ikon Centang (Pop In) */
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            opacity: 0;
+            animation: checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation-delay: 0.1s;
+        }
+
+        @keyframes checkPop {
+            0% { opacity: 0; transform: scale(0) rotate(-45deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .text {
+            font-size: 17px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Area Matematika */
+        #math-challenge {
+            display: none;
+            margin-top: 25px;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        #math-question {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus {
+            border-color: #00d2ff;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #0072ff, #00c6ff);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+        }
+
+        .success-msg {
+            color: #4CAF50;
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .error-msg {
+            color: #ff4b4b;
+            margin-top: 12px;
+            font-size: 14px;
+            display: none;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="info-header" id="welcome-text">
+        Web <span class="highlight" id="client-web-name">Loading...</span> menggunakan layanan <strong>Sky Verifikasi</strong>.<br>Silakan verifikasi terlebih dahulu.
+    </div>
+
+    <div class="verification-widget" id="widget">
+        <div class="checkbox-container" id="verify-btn" onclick="startVerification()">
+            <div class="checkbox" id="checkbox-ui"></div>
+            <span class="text" id="status-text">Verifikasi Saya Manusia</span>
+        </div>
+
+        <div id="math-challenge">
+            <div id="math-question"></div>
+            <div class="input-group">
+                <input type="number" id="math-answer" placeholder="?" onkeypress="if(event.key === 'Enter') checkAnswer()">
+                <button onclick="checkAnswer()">Kirim</button>
+            </div>
+            <div class="error-msg" id="error-msg">Jawaban salah, coba lagi!</div>
+        </div>
+
+        <div class="success-msg" id="success-msg">Verifikasi Berhasil! Mengalihkan... 🚀</div>
+    </div>
+
+    <script>
+        // --- 1. AMBIL DATA DARI URL PENGIRIM ---
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Ambil nama web
+        let clientSiteName = urlParams.get('sitename') || "Partner Kami";
+        document.getElementById('client-web-name').innerText = clientSiteName;
+        
+        // Ambil URL balikan (redirect)
+        let redirectUrl = urlParams.get('redirect');
+
+        // --- 2. LOGIKA ANTI BOT ---
+        let loadTime = Date.now();
+        let expectedAnswer = 0;
+
+        function startVerification() {
+            let clickTime = Date.now();
+            let timeDiff = clickTime - loadTime;
+
+            // Kalau terlalu cepat diklik, anggap bot
+            if (timeDiff < 500) {
+                alert("Aktivitas mencurigakan terdeteksi (Terlalu cepat).");
+                return;
+            }
+
+            // Jalankan animasi centang
+            document.getElementById('checkbox-ui').classList.add('checked');
+            document.getElementById('status-text').innerText = "Sedang Memverifikasi...";
+            document.getElementById('verify-btn').style.pointerEvents = 'none'; 
+
+            // Buat soal matematika
+            let num1 = Math.floor(Math.random() * 10) + 1;
+            let num2 = Math.floor(Math.random() * 10) + 1;
+            let isAddition = Math.random() > 0.5;
+            
+            if (isAddition) {
+                expectedAnswer = num1 + num2;
+                document.getElementById('math-question').innerText = `Berapa ${num1} + ${num2}?`;
+            } else {
+                if (num1 < num2) {
+                    let temp = num1;
+                    num1 = num2;
+                    num2 = temp;
+                }
+                expectedAnswer = num1 - num2;
+                document.getElementById('math-question').innerText = `Berapa ${num1} - ${num2}?`;
+            }
+
+            // Munculkan input form setelah centang selesai animasi
+            setTimeout(() => {
+                document.getElementById('math-challenge').style.display = 'block';
+                document.getElementById('math-answer').focus();
+            }, 600);
+        }
+
+        function checkAnswer() {
+            let userAnswer = parseInt(document.getElementById('math-answer').value);
+            let errorMsg = document.getElementById('error-msg');
+
+            if (userAnswer === expectedAnswer) {
+                // Sembunyikan soal, tampilkan sukses
+                document.getElementById('math-challenge').style.display = 'none';
+                document.getElementById('status-text').innerText = "Akses Diizinkan";
+                let successMsg = document.getElementById('success-msg');
+                successMsg.style.display = 'block';
+                errorMsg.style.display = 'none';
+
+                // --- 3. OTOMATIS REDIRECT BALIK KE WEB ASLI ---
+                setTimeout(() => {
+                    if (redirectUrl) {
+                        // Cek apakah url balikan udah punya parameter tanya (?)
+                        // Biar kita aman nambahin &sky_token atau ?sky_token
+                        let separator = redirectUrl.includes('?') ? '&' : '?';
+                        let finalRedirect = redirectUrl + separator + "sky_token=verified_ok";
+                        
+                        // Eksekusi redirect!
+                        window.location.replace(finalRedirect);
+                    } else {
+                        // Kalau client lupa masang url redirect di sistem JS mereka
+                        successMsg.innerHTML = "Verifikasi Selesai! <br><span style='font-size:14px'>Silakan kembali ke web sebelumnya.</span>";
+                    }
+                }, 1200); // Tunggu 1.2 detik biar pesannya kebaca dulu
+
+            } else {
+                // Kalau jawaban salah
+                errorMsg.style.display = 'block';
+                document.getElementById('math-answer').value = '';
+                document.getElementById('math-answer').focus();
+            }
+        }
+    </script>
+</body>
+</html>
